@@ -72,7 +72,7 @@ html, body {
 
   /* 헤더 영역 고정 */
   .sendbird-chat-container .sendbird-channel-header {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
@@ -80,39 +80,34 @@ html, body {
     flex: 0 0 auto;
   }
 
-  /* 메시지 영역 - 키보드에 따라 bottom 조정 */
+  /* 메시지 영역 - 키보드에 따라 높이 조정 */
   .sendbird-chat-container .sendbird-channel-list {
-    position: fixed;
+    position: absolute;
     top: 60px; /* 헤더 높이만큼 아래로 */
     left: 0;
     right: 0;
     bottom: 60px; /* footer 높이만큼 위로 */
     overflow-y: auto;
     flex: 1 1 auto;
-    transition: bottom 0.3s ease-in-out;
+    transition: height 0.3s ease-in-out;
     /* 모바일 브라우저에서 스크롤 최적화 */
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
   }
 
-  /* 입력창(footer) 영역 - 키보드에 따라 이동 */
+  /* 입력창(footer) 영역 고정 */
   .sendbird-chat-container .sendbird-message-input {
-    position: fixed;
+    position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 1000;
     flex: 0 0 auto;
-    transition: transform 0.3s ease-in-out;
   }
 
-  /* 키보드가 열렸을 때 입력창과 메시지 영역 모두 위로 이동 */
-  body.keyboard-open .sendbird-chat-container .sendbird-message-input {
-    transform: translateY(calc(-1 * var(--keyboard-height, 0px)));
-  }
-
+  /* 키보드가 열렸을 때 메시지 영역 높이만 조정 */
   body.keyboard-open .sendbird-chat-container .sendbird-channel-list {
-    bottom: calc(60px + var(--keyboard-height, 0px));
+    height: calc(100% - 120px - var(--keyboard-height, 0px));
   }
 
   /* iOS Safari 전용 스타일 */
@@ -137,5 +132,9 @@ html, body {
 
 
 .sendbird-conversation__scroll-container {
-  height: calc(100% - 30px) !important;
+  height: calc(100% - 60px) !important;
+}
+
+.sendbird-conversation__footer {
+  padding: 0 !important;
 }

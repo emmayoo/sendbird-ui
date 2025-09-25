@@ -8,18 +8,11 @@ export default function MobileKeyboardHandler() {
 
   // Sendbird 컴포넌트 조정 함수
   const adjustSendbirdComponents = useCallback((height: number) => {
-    // 입력창 조정
-    const messageInput = document.querySelector('.sendbird-message-input') as HTMLElement;
-    if (messageInput) {
-      messageInput.style.transform = `translateY(-${height}px)`;
-      messageInput.style.transition = 'transform 0.3s ease-in-out';
-    }
-
-    // 메시지 영역 조정
+    // 메시지 영역 높이만 조정 (헤더와 입력창은 고정)
     const messageList = document.querySelector('.sendbird-channel-list') as HTMLElement;
     if (messageList) {
-      messageList.style.bottom = `calc(60px + ${height}px)`;
-      messageList.style.transition = 'bottom 0.3s ease-in-out';
+      messageList.style.height = `calc(100% - 120px - ${height}px)`;
+      messageList.style.transition = 'height 0.3s ease-in-out';
     }
 
     // 스크롤 컨테이너 조정
@@ -32,18 +25,11 @@ export default function MobileKeyboardHandler() {
 
   // Sendbird 컴포넌트 복원 함수
   const restoreSendbirdComponents = useCallback(() => {
-    // 입력창 복원
-    const messageInput = document.querySelector('.sendbird-message-input') as HTMLElement;
-    if (messageInput) {
-      messageInput.style.transform = 'translateY(0)';
-      messageInput.style.transition = 'transform 0.3s ease-in-out';
-    }
-
     // 메시지 영역 복원
     const messageList = document.querySelector('.sendbird-channel-list') as HTMLElement;
     if (messageList) {
-      messageList.style.bottom = '60px';
-      messageList.style.transition = 'bottom 0.3s ease-in-out';
+      messageList.style.height = 'calc(100% - 120px)';
+      messageList.style.transition = 'height 0.3s ease-in-out';
     }
 
     // 스크롤 컨테이너 복원
