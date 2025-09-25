@@ -15,6 +15,7 @@ const channelUrl = 'sendbird_group_channel_25534_3d779482024a78e1a18c6afb60a0dc2
 export default function SendbirdChat({ appId, userId }: SendbirdChatProps) {
   return (
     <div 
+      className="sendbird-chat-container"
       style={{ 
         width: '100vw', 
         height: 'calc(var(--vh, 1vh) * 100)',

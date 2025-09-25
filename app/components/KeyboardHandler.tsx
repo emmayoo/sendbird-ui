@@ -25,13 +25,38 @@ export default function KeyboardHandler() {
         setIsKeyboardOpen(isKeyboardCurrentlyOpen);
         
         if (isKeyboardCurrentlyOpen) {
-          // 키보드가 열렸을 때
+          // 키보드가 열렸을 때 - 입력창만 위로 이동
           document.body.classList.add('keyboard-open');
-          document.documentElement.style.setProperty('--keyboard-height', `${initialHeight - currentHeight}px`);
+          const keyboardHeight = initialHeight - currentHeight;
+          document.documentElement.style.setProperty('--keyboard-height', `${keyboardHeight}px`);
+          
+          // Sendbird 입력창의 위치 조정
+          const messageInput = document.querySelector('.sendbird-message-input') as HTMLElement;
+          if (messageInput) {
+            messageInput.style.transform = `translateY(-${keyboardHeight}px)`;
+          }
+
+          // Sendbird 메시지 영역의 bottom 조정
+          const messageList = document.querySelector('.sendbird-channel-list') as HTMLElement;
+          if (messageList) {
+            messageList.style.bottom = `calc(60px + ${keyboardHeight}px)`;
+          }
         } else {
-          // 키보드가 닫혔을 때
+          // 키보드가 닫혔을 때 - 입력창을 원래 위치로 복원
           document.body.classList.remove('keyboard-open');
           document.documentElement.style.setProperty('--keyboard-height', '0px');
+          
+          // Sendbird 입력창을 원래 위치로 복원
+          const messageInput = document.querySelector('.sendbird-message-input') as HTMLElement;
+          if (messageInput) {
+            messageInput.style.transform = 'translateY(0)';
+          }
+
+          // Sendbird 메시지 영역을 원래 위치로 복원
+          const messageList = document.querySelector('.sendbird-channel-list') as HTMLElement;
+          if (messageList) {
+            messageList.style.bottom = '60px';
+          }
         }
       }
     };

@@ -25,17 +25,37 @@ export default function IOSKeyboardFix() {
           const keyboardHeight = initialHeight - currentHeight;
           
           if (keyboardHeight > 100) {
-            // 키보드가 열린 상태
+            // 키보드가 열린 상태 - 입력창만 위로 이동
             document.documentElement.style.setProperty('--keyboard-height', `${keyboardHeight}px`);
             document.documentElement.style.setProperty('--safe-area-inset-bottom', `${keyboardHeight}px`);
             
-            // 화면을 키보드 높이만큼 위로 이동
-            document.body.style.transform = `translateY(-${keyboardHeight}px)`;
+            // Sendbird 입력창만 키보드 높이만큼 위로 이동
+            const messageInput = document.querySelector('.sendbird-message-input') as HTMLElement;
+            if (messageInput) {
+              messageInput.style.transform = `translateY(-${keyboardHeight}px)`;
+            }
+
+            // Sendbird 메시지 영역의 bottom 조정
+            const messageList = document.querySelector('.sendbird-channel-list') as HTMLElement;
+            if (messageList) {
+              messageList.style.bottom = `calc(60px + ${keyboardHeight}px)`;
+            }
           } else {
-            // 키보드가 닫힌 상태
+            // 키보드가 닫힌 상태 - 입력창을 원래 위치로 복원
             document.documentElement.style.setProperty('--keyboard-height', '0px');
             document.documentElement.style.setProperty('--safe-area-inset-bottom', '0px');
-            document.body.style.transform = 'translateY(0)';
+            
+            // Sendbird 입력창을 원래 위치로 복원
+            const messageInput = document.querySelector('.sendbird-message-input') as HTMLElement;
+            if (messageInput) {
+              messageInput.style.transform = 'translateY(0)';
+            }
+
+            // Sendbird 메시지 영역을 원래 위치로 복원
+            const messageList = document.querySelector('.sendbird-channel-list') as HTMLElement;
+            if (messageList) {
+              messageList.style.bottom = '60px';
+            }
           }
         };
 

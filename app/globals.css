@@ -59,11 +59,54 @@ html, body {
     overflow: hidden;
   }
 
-  /* 키보드가 열렸을 때의 스타일 */
-  body.keyboard-open {
+  /* Sendbird UIKit 레이아웃 조정 */
+  .sendbird-chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+  }
+
+  /* 헤더 영역 고정 */
+  .sendbird-chat-container .sendbird-channel-header {
     position: fixed;
-    height: 100vh;
-    overflow: hidden;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    flex: 0 0 auto;
+  }
+
+  /* 메시지 영역 - 키보드에 따라 bottom 조정 */
+  .sendbird-chat-container .sendbird-channel-list {
+    position: fixed;
+    top: 60px; /* 헤더 높이만큼 아래로 */
+    left: 0;
+    right: 0;
+    bottom: 60px; /* footer 높이만큼 위로 */
+    overflow-y: auto;
+    flex: 1 1 auto;
+    transition: bottom 0.3s ease-in-out;
+  }
+
+  /* 입력창(footer) 영역 - 키보드에 따라 이동 */
+  .sendbird-chat-container .sendbird-message-input {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    flex: 0 0 auto;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  /* 키보드가 열렸을 때 입력창과 메시지 영역 모두 위로 이동 */
+  body.keyboard-open .sendbird-chat-container .sendbird-message-input {
+    transform: translateY(calc(-1 * var(--keyboard-height, 0px)));
+  }
+
+  body.keyboard-open .sendbird-chat-container .sendbird-channel-list {
+    bottom: calc(60px + var(--keyboard-height, 0px));
   }
 
   /* iOS 앱 내 웹뷰에서의 키보드 처리 */
@@ -71,18 +114,10 @@ html, body {
     body {
       height: -webkit-fill-available;
     }
-    
-    body.keyboard-open {
-      height: calc(100vh - var(--keyboard-height));
-      padding-bottom: var(--safe-area-inset-bottom);
-    }
   }
 }
 
-/* 안드로이드 웹뷰에서의 키보드 처리 */
-@media screen and (max-width: 768px) and (-webkit-min-device-pixel-ratio: 1) {
-  body.keyboard-open {
-    height: calc(100vh - var(--keyboard-height));
-    transform: translateY(0);
-  }
+
+.sendbird-conversation__scroll-container {
+  height: calc(100% - 30px) !important;
 }
