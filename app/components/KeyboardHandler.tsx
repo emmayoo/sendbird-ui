@@ -1,54 +1,113 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function KeyboardHandler() {
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  const [initialViewportHeight, setInitialViewportHeight] = useState(0);
+
   useEffect(() => {
-    // iOS에서 키보드가 올라올 때 뷰포트 높이 조정
-    const handleResize = () => {
-      const vh = window.innerHeight * 0.01;
+    // 초기 뷰포트 높이 저장
+    const initialHeight = window.innerHeight;
+    setInitialViewportHeight(initialHeight);
+
+    // 뷰포트 높이 계산 함수
+    const updateViewportHeight = () => {
+      const currentHeight = window.innerHeight;
+      const vh = currentHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
-    };
-
-    // 초기 설정
-    handleResize();
-
-    // 리사이즈 이벤트 리스너 추가
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('orientationchange', handleResize);
-
-    // iOS Safari에서 키보드 관련 이벤트 처리
-    const handleFocusIn = (e: FocusEvent) => {
-      const target = e.target as HTMLElement;
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
-        // 키보드가 올라올 때 스크롤 방지
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        document.body.style.height = '100%';
+      
+      // 키보드 상태 감지 (뷰포트 높이가 150px 이상 줄어들면 키보드가 열린 것으로 판단)
+      const keyboardThreshold = 150;
+      const isKeyboardCurrentlyOpen = currentHeight < initialHeight - keyboardThreshold;
+      
+      if (isKeyboardCurrentlyOpen !== isKeyboardOpen) {
+        setIsKeyboardOpen(isKeyboardCurrentlyOpen);
+        
+        if (isKeyboardCurrentlyOpen) {
+          // 키보드가 열렸을 때
+          document.body.classList.add('keyboard-open');
+          document.documentElement.style.setProperty('--keyboard-height', `${initialHeight - currentHeight}px`);
+        } else {
+          // 키보드가 닫혔을 때
+          document.body.classList.remove('keyboard-open');
+          document.documentElement.style.setProperty('--keyboard-height', '0px');
+        }
       }
     };
 
-    const handleFocusOut = () => {
-      // 키보드가 내려갈 때 원래 상태로 복원
-      setTimeout(() => {
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.height = '';
-      }, 100);
-    };
+    // 초기 설정
+    updateViewportHeight();
 
     // 이벤트 리스너 등록
-    document.addEventListener('focusin', handleFocusIn);
-    document.addEventListener('focusout', handleFocusOut);
+    const events = ['resize', 'orientationchange', 'focusin', 'focusout'];
+    
+    events.forEach(event => {
+      window.addEventListener(event, updateViewportHeight);
+    });
+
+    // iOS Safari 전용 처리
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isInApp = (window.navigator as any).standalone || 
+                   (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+
+    if (isIOS) {
+      // iOS에서 키보드 관련 추가 처리
+      const handleIOSKeyboard = () => {
+        // iOS에서 키보드가 올라올 때 스크롤 방지
+        if (isKeyboardOpen) {
+          document.body.style.position = 'fixed';
+          document.body.style.top = '0';
+          document.body.style.left = '0';
+          document.body.style.right = '0';
+          document.body.style.bottom = '0';
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.position = '';
+          document.body.style.top = '';
+          document.body.style.left = '';
+          document.body.style.right = '';
+          document.body.style.bottom = '';
+          document.body.style.overflow = '';
+        }
+      };
+
+      // iOS 앱 내 웹뷰에서의 추가 처리
+      if (isInApp) {
+        // 앱 내 웹뷰에서는 더 강력한 키보드 처리
+        const handleAppKeyboard = () => {
+          const currentHeight = window.innerHeight;
+          const heightDiff = initialHeight - currentHeight;
+          
+          if (heightDiff > 100) {
+            // 키보드가 열린 상태
+            document.documentElement.style.setProperty('--safe-area-inset-bottom', `${heightDiff}px`);
+          } else {
+            // 키보드가 닫힌 상태
+            document.documentElement.style.setProperty('--safe-area-inset-bottom', '0px');
+          }
+        };
+
+        window.addEventListener('resize', handleAppKeyboard);
+        
+        return () => {
+          events.forEach(event => {
+            window.removeEventListener(event, updateViewportHeight);
+          });
+          window.removeEventListener('resize', handleAppKeyboard);
+        };
+      }
+
+      handleIOSKeyboard();
+    }
 
     // 클린업
     return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('orientationchange', handleResize);
-      document.removeEventListener('focusin', handleFocusIn);
-      document.removeEventListener('focusout', handleFocusOut);
+      events.forEach(event => {
+        window.removeEventListener(event, updateViewportHeight);
+      });
     };
-  }, []);
+  }, [isKeyboardOpen, initialViewportHeight]);
 
   return null;
 }

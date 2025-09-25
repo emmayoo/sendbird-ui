@@ -24,7 +24,8 @@ export default function SendbirdChat({ appId, userId }: SendbirdChatProps) {
         right: 0,
         bottom: 0,
         overflow: 'hidden',
-        touchAction: 'manipulation'
+        touchAction: 'manipulation',
+        paddingBottom: 'var(--safe-area-inset-bottom, 0px)'
       }}
     >
       <SendbirdProvider

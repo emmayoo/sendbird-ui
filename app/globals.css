@@ -4,6 +4,8 @@
   --background: #ffffff;
   --foreground: #171717;
   --vh: 1vh; /* 동적 뷰포트 높이를 위한 CSS 변수 */
+  --keyboard-height: 0px; /* 키보드 높이를 위한 CSS 변수 */
+  --safe-area-inset-bottom: 0px; /* iOS 앱에서 키보드 높이 */
 }
 
 @theme inline {
@@ -46,7 +48,7 @@ html, body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* iOS에서 키보드 관련 추가 스타일 */
+/* 모바일에서 키보드 관련 추가 스타일 */
 @media screen and (max-width: 768px) {
   body {
     position: fixed;
@@ -55,5 +57,32 @@ html, body {
     right: 0;
     bottom: 0;
     overflow: hidden;
+  }
+
+  /* 키보드가 열렸을 때의 스타일 */
+  body.keyboard-open {
+    position: fixed;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* iOS 앱 내 웹뷰에서의 키보드 처리 */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      height: -webkit-fill-available;
+    }
+    
+    body.keyboard-open {
+      height: calc(100vh - var(--keyboard-height));
+      padding-bottom: var(--safe-area-inset-bottom);
+    }
+  }
+}
+
+/* 안드로이드 웹뷰에서의 키보드 처리 */
+@media screen and (max-width: 768px) and (-webkit-min-device-pixel-ratio: 1) {
+  body.keyboard-open {
+    height: calc(100vh - var(--keyboard-height));
+    transform: translateY(0);
   }
 }
