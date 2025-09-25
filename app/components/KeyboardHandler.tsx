@@ -48,7 +48,7 @@ export default function KeyboardHandler() {
 
     // iOS Safari 전용 처리
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isInApp = (window.navigator as any).standalone || 
+    const isInApp = window.navigator.standalone || 
                    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
 
     if (isIOS) {
