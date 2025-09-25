@@ -14,7 +14,19 @@ const channelUrl = 'sendbird_group_channel_25534_3d779482024a78e1a18c6afb60a0dc2
 
 export default function SendbirdChat({ appId, userId }: SendbirdChatProps) {
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
+    <div 
+      style={{ 
+        width: '100vw', 
+        height: 'calc(var(--vh, 1vh) * 100)',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflow: 'hidden',
+        touchAction: 'manipulation'
+      }}
+    >
       <SendbirdProvider
         appId={appId}
         userId={userId}
