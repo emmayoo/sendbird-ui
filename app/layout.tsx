@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import KeyboardHandler from "./components/KeyboardHandler";
-import IOSKeyboardFix from "./components/IOSKeyboardFix";
+import MobileKeyboardHandler from "./components/MobileKeyboardHandler";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,8 +35,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <KeyboardHandler />
-        <IOSKeyboardFix />
+        <MobileKeyboardHandler />
         {children}
       </body>
     </html>

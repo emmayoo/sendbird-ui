@@ -57,6 +57,9 @@ html, body {
     right: 0;
     bottom: 0;
     overflow: hidden;
+    /* 모바일 브라우저에서 키보드 관련 스타일 */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
   }
 
   /* Sendbird UIKit 레이아웃 조정 */
@@ -87,6 +90,9 @@ html, body {
     overflow-y: auto;
     flex: 1 1 auto;
     transition: bottom 0.3s ease-in-out;
+    /* 모바일 브라우저에서 스크롤 최적화 */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 
   /* 입력창(footer) 영역 - 키보드에 따라 이동 */
@@ -109,10 +115,22 @@ html, body {
     bottom: calc(60px + var(--keyboard-height, 0px));
   }
 
-  /* iOS 앱 내 웹뷰에서의 키보드 처리 */
+  /* iOS Safari 전용 스타일 */
   @supports (-webkit-touch-callout: none) {
     body {
       height: -webkit-fill-available;
+    }
+    
+    /* iOS에서 키보드 관련 추가 처리 */
+    body.keyboard-open {
+      height: -webkit-fill-available;
+    }
+  }
+
+  /* 안드로이드 Chrome 전용 스타일 */
+  @media screen and (-webkit-min-device-pixel-ratio: 1) and (max-width: 768px) {
+    body.keyboard-open {
+      height: 100vh;
     }
   }
 }
